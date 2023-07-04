@@ -48,7 +48,7 @@ app.post('/', async (req, res) => {
 
         var compressed = await compress(text);
         
-        res.send(encodeURIComponent(compressed));
+        res.send(compressed.replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_"));
     }catch{
         res.status(400).send("Invalid html");
     }
