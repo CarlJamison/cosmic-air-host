@@ -11,13 +11,13 @@ app.use(express.static(__dirname + '/public'));
 app.get('/d/:query', async (req, res) => {
     var base64 = req.params.query;
     if(!base64 || !base64.length){
-        res.status(403).send('You suck')
+        res.status(403).send('Empty query')
     }else{
         try {
             var html = await decompress(base64);
             res.send(html);
         } catch (error) {
-            res.status(403).send('You suck less')
+            res.status(403).send('Invalid html')
         }
     }
     
