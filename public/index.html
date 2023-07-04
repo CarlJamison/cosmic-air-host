@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<title>Carl Jamison</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<style>
+body, html {
+  height: 100%;
+  font-family: 'Bebas Neue', cursive;
+  margin: 0;
+  background-color: lightgray;
+}
+
+button{
+  background-color: #4d4d4d;
+  color: whitesmoke;
+  margin: 16px 8px;
+  padding: 4px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+h1{
+  color: #4d4d4d;
+  margin: 0px 32px 32px 32px;
+  letter-spacing: 8px;
+}
+
+header{
+  background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+	background-size: 400% 400%;
+  animation: gradient 15s ease infinite;
+}
+
+textarea{
+    width: 95%;
+    resize: vertical;
+    border-radius: 10px;
+    height: 10em;
+}
+
+.neu{
+  box-shadow: 6px 6px 14px 0 rgb(0 0 0 / 20%), -8px -8px 18px 0 rgb(255 255 255 / 60%);
+  border-radius: 40px;
+  margin: 32px;
+  background: linear-gradient(-45deg, lightgray, #f1f1f1);
+  border: 1px #d0d0d0 solid;
+}
+
+@keyframes gradient {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
+
+header div{
+  padding: 32px;
+  font-size: 32px;
+  color: whitesmoke;
+  letter-spacing: 20px;
+  box-shadow: grey 0px 2px 8px;
+}
+
+@keyframes colorchange {
+  from {background-image: linear-gradient(to bottom right, #ff81fb, #6f00b4);}
+  to {background-image: linear-gradient(to bottom right, #636363, #6f00b4);}
+}
+</style>
+<body>
+
+<header>
+  <div>Air Host</div>
+</header>
+
+<div>
+  <div style="padding: 32px 0;" class="neu">
+    <h1>Create Link</h1>
+
+    <div style="margin: 0 32px">
+      <textarea id="txtArea"></textarea>
+      <div>
+        <button onclick="build()">Build</button>
+        <button onclick="copyLink()">Copy link to clipboard</button>
+      </div>
+      <div style="overflow-wrap: anywhere" id="link-cool">
+
+      </div>
+    </div>
+  </div>
+
+  <div style="height: 32px"></div>
+</div>
+<script>
+    function build(){
+      $.ajax({
+        type: "POST",
+        url: "/",
+        data: $("#txtArea").val(),
+        contentType: 'text/plain',
+        success: data => $("#link-cool").html(window.location.href + "d/" + data)
+      })
+    }
+
+    function copyLink(){
+      var link = $("#link-cool").html();
+      if(link.length){
+        navigator.clipboard.writeText(link);
+      }
+    }
+
+</script>
+</body>
+</html>
