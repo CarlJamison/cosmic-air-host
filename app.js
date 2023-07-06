@@ -23,6 +23,22 @@ app.get('/d/:query', async (req, res) => {
     
 });
 
+app.get('/h/:query', async (req, res) => {
+    var base64 = req.params.query;
+    if(!base64 || !base64.length){
+        res.status(403).send('Empty query')
+    }else{
+        try {
+            var html = await decompress(base64);
+            html = hydrate(html);
+            res.send(html);
+        } catch (error) {
+            res.status(403).send('Invalid html')
+        }
+    }
+    
+});
+
 app.post('/', async (req, res) => {
     let text = req.body;
     try{
@@ -46,13 +62,40 @@ app.post('/', async (req, res) => {
             useShortDoctype: true
         });
 
+        console.log((await compress(text)).length)
+        console.log(templates.length)
+        text = dehydrate(text);
+        console.log(text)
         var compressed = await compress(text);
-        
+        console.log(compressed.length)
         res.send(compressed.replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_"));
     }catch{
         res.status(400).send("Invalid html");
     }
 })
+
+var tokens = "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+var templates = ["|", " rel=stylesheet>", "background", "margin", "padding", "</button>", "<button ", "button", "onclick=", 
+"color:", "class=", "</div>", "<div", "script", "box-shadow", "<h1>", "family",
+"style", "title", "https://", "header", "-size:", "</body>", "body", "border", "height", "font-", "gradient", "width",
+"<meta charset=", "<meta ", "<link ", "src=\"", "href=", "content=", "name=", "display", "position", "window.", "</h1>",
+"left", "right", "top", "bottom", "100%", "font", ".com", "console.log("]
+
+function hydrate(html){
+    for(var i = templates.length - 1; i > 0; i--){
+        html = html.replaceAll(`|${tokens[i]}`, templates[i]);
+    }
+    
+    return "<!doctype html>" + html;
+}
+
+function dehydrate(html){
+
+    for(var i = 0; i < templates.length; i++){
+        html = html.replaceAll(templates[i], `|${tokens[i]}`)
+    }
+    return html.replace("<!doctype html>", "");
+}
 
 server.listen(port, () => {
   console.log(`Server running at http://localhost:${port}/`);

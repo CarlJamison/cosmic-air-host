@@ -100,13 +100,16 @@ header div{
 </div>
 <script>
     function build(){
-      $.ajax({
+      var html = $("#txtArea").val();
+      if(html && html.length){
+        $.ajax({
         type: "POST",
         url: "/",
-        data: $("#txtArea").val(),
+        data: html,
         contentType: 'text/plain',
-        success: data => $("#link-cool").html(window.location.href + "d/" + data)
+        success: data => $("#link-cool").html(window.location.href + "h/" + data)
       })
+      }
     }
 
     function copyLink(){
