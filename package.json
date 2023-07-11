@@ -10,7 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.18.2",
-    "html-minifier": "^4.0.0",
+    "html-minifier-terser": "^7.2.0",
     "shrink-string": "^3.1.7"
   }
 }
