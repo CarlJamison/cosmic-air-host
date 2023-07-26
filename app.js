@@ -8,23 +8,16 @@ const port = process.env.PORT || 80;
 app.use(bodyParser.text());
 app.use(express.static(__dirname + '/public'));
 
-app.get('/d/:query', async (req, res) => {
-    var base64 = req.params.query;
-    if(!base64 || !base64.length){
-        res.status(403).send('Empty query')
-    }else{
-        try {
-            var html = await decompress(base64);
-            res.send(html);
-        } catch (error) {
-            res.status(403).send('Invalid html')
-        }
-    }
-    
+app.get('/h/:query', async (req, res) => {
+    var base64 = "H4sIAAAAAAAAC" + req.params.query;
+    handleDecompression(base64, res);
 });
 
-app.get('/h/:query', async (req, res) => {
-    var base64 = req.params.query;
+app.get('/:query', async (req, res) => {
+    handleDecompression(req.params.query, res);
+});
+
+async function handleDecompression(base64, res){
     if(!base64 || !base64.length){
         res.status(403).send('Empty query')
     }else{
@@ -36,8 +29,7 @@ app.get('/h/:query', async (req, res) => {
             res.status(403).send('Invalid html')
         }
     }
-    
-});
+}
 
 app.post('/', async (req, res) => {
     let text = req.body;
@@ -53,10 +45,10 @@ app.post('/', async (req, res) => {
                     booleans_as_integers: true,
                     ecma: 2015,
                     pure_getters: true,
-                    toplevel: true,
+                    //toplevel: true,
                     passes: 3
                 },
-                toplevel: true
+                //toplevel: true
             },
             minifyURLs: true,
             removeRedundantAttributes: true,
@@ -81,22 +73,26 @@ app.post('/', async (req, res) => {
         var compressed = await compress(dehydrated);
         console.log("Post-compression: " + compressed.length + " (without dehydration: " + (await compress(text)).length + ")");
 
-        res.send(compressed.replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_"));
+        res.send(compressed
+            .replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_").replace("H4sIAAAAAAAAC", "h/"));
     }catch{
         res.status(400).send("Invalid html");
     }
 })
 
-var tokens = "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+"
-var templates = ["|", " rel=stylesheet>", "background", "margin", "padding", "</button>", "<button ", "button", "onclick=", 
-"color:", "class=", "</div>", "<div", "script", "box-shadow", "<h1>", "family", "Math.", ".filter(", "return", ".length",
+var tokens = "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+-=[];',./`{}|:<>?~"
+var templates = ["|", "<meta content=\"width=device-width,initial-scale=1\" name=viewport>", "rel=stylesheet>", 
+"background", "margin", "padding", "</button>", "<button ", "button", "onclick=", "index", "Math.PI", "</title>",
+"color:", "class=", "</div>", "<div", "</script>", "setInterval(", ".clearRect", ".lineWidth", "let ",
+"script", "box-shadow", "<h1>", "family", "Math.floor(", "Math.random(", "Math.", ".filter(", "return", ".length",
 "style", "title", "https://", "header", "-size:", "</body>", "body", "border", "height", "font-", "gradient", "width",
 "<meta charset=", "<meta ", "<link ", "src=\"", "href=", "content=", "name=", "display", "position", "window.", "</h1>",
-"left", "right", "top", "bottom", "100%", "font", ".com", "console.log(", "function ", "document.getElementById(",
+"left", "right", "top", "bottom", "100%", "font", ".com", "console.log(", "function", "document.getElementById(",
 "for(var i=0;i<", "random", ".fill", "var ", "const ", "find", "canvas", "Date.now()", "floor(", "for(", "forEach(",
-";i++)", "inner", "getContext(", "null", "<html lang=en>"]
+";i++)", "inner", "getContext(", "null", "<html lang=en>", ".strokeStyle", ".beginPath()", ".stroke()"]
 
 function hydrate(html){
+
     for(var i = templates.length - 1; i >= 0; i--){
         html = html.replaceAll(`|${tokens[i]}`, templates[i]);
     }
