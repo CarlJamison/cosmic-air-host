@@ -26,7 +26,7 @@ async function handleDecompression(base64, res){
             html = hydrate(html);
             res.send(html);
         } catch (error) {
-            res.status(403).send('Invalid html')
+            res.status(404).send('Page not found')
         }
     }
 }
@@ -83,11 +83,11 @@ app.post('/', async (req, res) => {
 var tokens = "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+-=[];',./`{}|:<>?~"
 var templates = ["|", "<meta content=\"width=device-width,initial-scale=1\" name=viewport>", "rel=stylesheet>", 
 "background", "margin", "padding", "</button>", "<button ", "button", "onclick=", "index", "Math.PI", "</title>",
-"color:", "class=", "</div>", "<div", "</script>", "setInterval(", ".clearRect", ".lineWidth", "let ",
-"script", "box-shadow", "<h1>", "family", "Math.floor(", "Math.random(", "Math.", ".filter(", "return", ".length",
-"style", "title", "https://", "header", "-size:", "</body>", "body", "border", "height", "font-", "gradient", "width",
+"color:", "class=", "</div>", "<div", "</script>", "setInterval(", ".clearRect", ".lineWidth", "let ", "cursor:pointer",
+"script", "box-shadow", "<h1>", "family", "Math.floor(", "Math.random(", "Math.", ".filter(", "return", ".length", ".replace(",
+"<style", "</style>", "style=", "title", "https://", "<header", "</header>", "header", "-size:", "</body>", "body", "border-radius:", "border", "height", "font-", "gradient", "width",
 "<meta charset=", "<meta ", "<link ", "src=\"", "href=", "content=", "name=", "display", "position", "window.", "</h1>",
-"left", "right", "top", "bottom", "100%", "font", ".com", "console.log(", "function", "document.getElementById(",
+"left", "right", "top", "bottom", "100%", "font", ".com", "console.log(", "function", "document.getElementById(", "document.",
 "for(var i=0;i<", "random", ".fill", "var ", "const ", "find", "canvas", "Date.now()", "floor(", "for(", "forEach(",
 ";i++)", "inner", "getContext(", "null", "<html lang=en>", ".strokeStyle", ".beginPath()", ".stroke()"]
 
